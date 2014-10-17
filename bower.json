@@ -1,0 +1,26 @@
+{
+  "name": "backoff-simulator",
+  "version": "0.0.1",
+  "authors": [
+    "Rico Huijbers <rix0rrr@gmail.com>"
+  ],
+  "description": "Request Backoff Simulator",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "lodash": "~2.4.1",
+    "heap": "~0.2.5",
+    "knockout": "~3.2.0",
+    "foundation": "~5.4.6",
+    "flot": "~0.8.3",
+    "jsonc": "~1.6.1",
+    "LZMA-JS": "~1.2.3"
+  }
+}
