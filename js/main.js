@@ -1,3 +1,5 @@
+'use strict';
+
 function Distribution(mean, vari) {
     this.mean = ko.observable(mean);
     this.variance = ko.observable(vari);
@@ -39,6 +41,8 @@ function Servers() {
 var BACKOFFS = {
     'constant': constantBO,
     'constant-random': function() { return randomized(constantBO()) },
+    'linear': linearBO,
+    'linear-random': function() { return randomized(linearBO()) },
     'exponential': expoBO,
     'exponential-random': function() { return randomized(expoBO()) }
 };
@@ -56,8 +60,7 @@ function Clients() {
             interval: this.interval.distr(),
             backoff: BACKOFFS[this.backoff()](),
             timeout: this.timeout(),
-            retries: this.retries(),
-            interval: this.interval.distr()
+            retries: this.retries()
         }
     }
 }
@@ -78,6 +81,18 @@ function timeseries(label, fn, args) {
     }
 }
 
+function cumu(series_generator) {
+    return function(slices) {
+        var series = series_generator(slices);
+
+        for (var i = 1; i < series.data.length; i++) {
+            series.data[i][1] += series.data[i-1][1];
+        }
+
+        return series;
+    }
+}
+
 function Results() {
     var self = this;
 
@@ -93,6 +108,8 @@ function Results() {
         requestrate:       timeseries('Unique Requests/s', 'ratesum', ['start_request']),
         waitp50:           timeseries('Backoff (p50)', 'p', [50, 'wait']),
         waitp99:           timeseries('Backoff (p99)', 'p', [99, 'wait']),
+        uniques:           cumu(timeseries('Unique requests', 'sum', ['start_request'])),
+        served:            cumu(timeseries('Served requests', 'sum', ['request_succeeded']))
     };
 
     var allSeries = {};
@@ -102,9 +119,11 @@ function Results() {
         { caption: 'Latencies vs. queue size',
           series: [['latencies', 'success_latencies', 'failure_latencies'], ['queue_size']] },
         { caption: 'Transactions per second',
-          series: [['tps', 'successrate', 'failrate', 'requestrate'], []] },
+          series: [['tps', 'successrate', 'failrate'], []] },
         { caption: 'Backoff times', 
-          series: [['waitp50', 'waitp99'], []] }
+          series: [['waitp50', 'waitp99'], []] },
+        { caption: 'Request count', 
+          series: [['uniques', 'served'], []] },
     ]);
     this.selectedChart = ko.observable(this.charts()[0]);
 
@@ -185,9 +204,6 @@ function showChart(series) {
     });
 }
 
-//var ctx = $('#chart-area').get(0).getContext("2d");
-//var chart = new Chart(ctx);
-
 var simu = new Simu();
 
 if (window.location.hash.substr(1)) {
@@ -199,8 +215,10 @@ showChart([]);
 
 subscribeAll(simu, function() { pushState(simu); });
 
-$(window).scroll(function() {
+
+var scrollGraph = function() {
     var t = $('#main-row').offset().top;
     $('#chartholder').css('padding-top', Math.max(0, $(window).scrollTop() - t - 10) + 30);
-    return arguments.callee; // Just a nasty trick to call-and-return :)
-}());
+}
+$(window).scroll(scrollGraph);
+scrollGraph();

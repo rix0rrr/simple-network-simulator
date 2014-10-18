@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Actors for the simulation
  */

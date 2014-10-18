@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 //----------------------------------------------------------------------
 //  EVENT
@@ -11,7 +11,11 @@ function Event(t, fn, obj, args) {
 }
 
 Event.compare = function(a, b) {
-    return a.t - b.t;
+    if (a.t < b.t)
+        return -1;
+    if (b.t < a.t)
+        return 1;
+    return 0;
 }
 
 /**
@@ -69,17 +73,22 @@ function Simulation() {
     this.events = new Heap(Event.compare);
     this.stats = [];
     this.now = 0;
+    this.end_time = null;
 }
 
 _.assign(Simulation.prototype, {
     schedule: function(d, fn, obj, args) {
         args = args || [];
         if (d < 1) d = 1; // Must advance time to prevent infinite loop
-        this.events.push(new Event(this.now + d, fn, obj, args));
+        var t = this.now + d;
+        if (!this.end_time || t < this.end_time) {
+            this.events.push(new Event(t, fn, obj, args));
+        }
     },
 
     run: function(max_time) {
         var end_time = max_time ? this.now + max_time : null;
+        this.end_time = end_time;
 
         var events = this.events;
         while (!events.empty()) {
