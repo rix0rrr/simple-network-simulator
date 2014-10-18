@@ -43,12 +43,15 @@ var BACKOFFS = {
     'constant-random': function() { return randomized(constantBO()) },
     'linear': linearBO,
     'linear-random': function() { return randomized(linearBO()) },
+    'quadatric': quadraticBO,
+    'quadatric-random': function() { return randomized(quadraticBO()) },
     'exponential': expoBO,
     'exponential-random': function() { return randomized(expoBO()) }
 };
 
 function Clients() {
-    this.count = ko.observable(1000);
+    this.count0 = ko.observable(1000);
+    this.count1 = ko.observable(3000);
     this.backoff = ko.observable('constant');
     this.backoffOptions = ko.observable(_.keys(BACKOFFS));
     this.timeout = ko.observable(30000);
@@ -200,7 +203,8 @@ function Simu() {
 function showChart(series) {
     $.plot($('#chart-area'), series, {
         yaxis: { min: 0 },
-        y2axis: { position: 'right', min: 0 }
+        y2axis: { position: 'right', min: 0 },
+        legend: { container: '#legend-area', noColumns: 5 }
     });
 }
 

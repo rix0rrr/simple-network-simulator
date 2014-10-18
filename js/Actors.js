@@ -228,6 +228,18 @@ function linearBO(n) {
 }
 
 /**
+ * Quadratric backoff
+ */
+function quadraticBO(n) {
+    n = n || 50;
+    var i = 0;
+    return function() {
+        i += 1;
+        return n * i * i;
+    }
+}
+
+/**
  * Exponential backoff function
  */
 function expoBO(n) {
