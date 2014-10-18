@@ -160,8 +160,10 @@ _.assign(Request.prototype, {
     _requestTimedOut: function(seq) {
         if (!this._expectedResponse(seq)) return;
 
+        this.sim.record('request_failed', 1);
         this.sim.record('request_timedout', 1);
         this.sim.record('latency', this.sim.now - this.start);
+        this.sim.record('failure_latency', this.sim.now - this.start);
 
         this._afterFailure(seq);
     },

@@ -111,8 +111,9 @@ function Results() {
         requestrate:       timeseries('Unique Requests/s', 'ratesum', ['start_request']),
         waitp50:           timeseries('Backoff (p50)', 'p', [50, 'wait']),
         waitp99:           timeseries('Backoff (p99)', 'p', [99, 'wait']),
-        uniques:           cumu(timeseries('Unique requests', 'sum', ['start_request'])),
-        served:            cumu(timeseries('Served requests', 'sum', ['request_succeeded']))
+        uniques:           cumu(timeseries('Unique queries', 'sum', ['start_request'])),
+        served:            cumu(timeseries('Served queries', 'sum', ['request_succeeded'])),
+        useless:           cumu(timeseries('Wasted requests', 'sum', ['request_failed']))
     };
 
     var allSeries = {};
@@ -120,13 +121,13 @@ function Results() {
 
     this.charts = ko.observable([
         { caption: 'Latencies vs. queue size',
-          series: [['latencies', 'success_latencies', 'failure_latencies'], ['queue_size']] },
+          series: [['latencies', 'success_latencies'], ['queue_size']] },
         { caption: 'Transactions per second',
           series: [['tps', 'successrate', 'failrate'], []] },
         { caption: 'Backoff times', 
           series: [['waitp50', 'waitp99'], []] },
         { caption: 'Request count', 
-          series: [['uniques', 'served'], []] },
+          series: [['uniques', 'served', 'useless'], []] },
     ]);
     this.selectedChart = ko.observable(this.charts()[0]);
 
@@ -180,9 +181,18 @@ function Simu() {
         var servers = _.map(_.range(this.servers.count()), function() {
             return new Server(sim, network, this.servers.options());
         }.bind(this));
-        var clients = _.map(_.range(this.clients.count()), function() {
-            return new Client(sim, network, servers, this.clients.options());
-        }.bind(this));
+
+        var spawnClient = function() { return new Client(sim, network, servers, this.clients.options()); }.bind(this);
+
+        // Spawn base amount of clients
+        _.each(_.range(this.clients.count0()), spawnClient);
+
+        // Spawn extra clients over the runtime of the simulation
+        var delta = Math.max(0, this.clients.count1() - this.clients.count0());
+        var dt = this.duration() * 60 * 1000 / delta;
+        _.each(_.range(delta), function(k) {
+            sim.schedule((k + 1) * dt, spawnClient, null);
+        });
     }
 
     this.go = function() {
