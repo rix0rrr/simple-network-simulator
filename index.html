@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Simple Network Simulator</title>
+        <meta charset="utf-8">
 
         <meta name="viewport" content="user-scalable=no, width=device-width" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -15,188 +16,189 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <div class="row">
+        <div class="row outer">
             <div class="small-12 columns">
-                <h3>Simple Network Simulator</h4>
+            <h3>Simple Network Simulator</h4>
+
+                <div class="row" id="main-row">
+                    <div class="small-4 columns">
+                        <form data-bind="submit: go">
+                            <fieldset data-bind="with: servers">
+                                <legend>Servers</legend>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">Count</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: count">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">Proc (ms)</label>
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <input type="text" data-bind="value: proc_time.mean">
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <div class="between inline">σ</div>
+                                        <input type="text" data-bind="value: proc_time.variance">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right">Max. queue</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: queue_bound">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="checkbox" id="quick_reject" data-bind="checked: quick_reject">
+                                        <label for="quick_reject">Quick reject</label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">P(fail)</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: P_fail">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <!-- ....................................... -->
+                            <fieldset data-bind="with: clients">
+                                <legend>Clients</legend>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">Count</label>
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <input type="text" data-bind="value: count0">
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <div class="between small inline">to</div>
+                                        <input type="text" data-bind="value: count1">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">Backoff</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                    <select data-bind="options: backoffOptions, value: backoff"></select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right">Interval (ms)</label>
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <input type="text" data-bind="value: interval.mean">
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <div class="between inline">σ</div>
+                                        <input type="text" data-bind="value: interval.variance">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right">Timeout (ms)</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: timeout">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">Retries</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: retries">
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                            <!-- ....................................... -->
+                            <fieldset data-bind="with: network">
+                                <legend>Network</legend>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right">Latency (ms)</label>
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <input type="text" data-bind="value: latency.mean">
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <div class="between inline">σ</div>
+                                        <input type="text" data-bind="value: latency.variance">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right inline">P(drop)</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: P_drop">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Simulation</legend>
+
+                                <div class="row">
+                                    <div class="small-4 columns">
+                                        <label class="right">Duration (min)</label>
+                                    </div>
+                                    <div class="small-8 columns">
+                                        <input type="text" data-bind="value: duration">
+                                    </div>
+                                </div>
+
+                                <input type="submit" class="right button" value="Go">
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <div class="small-8 columns" id="chartholder" data-bind="with: results">
+                        <select data-bind="options: charts, optionsText: 'caption', value: selectedChart"></select>
+                        <div id="chart-area" width="500" height="500" style="width: 100%; height: 500px;"></div>
+                        <div id="legend-area"></div>
+                    </div>
+                </div>
+
+                <script src="bower_components/jquery/dist/jquery.min.js"></script>
+                <script src="bower_components/lodash/dist/lodash.min.js"></script>
+                <script src="bower_components/heap/lib/heap.js"></script>
+                <script src="bower_components/knockout/dist/knockout.js"></script>
+                <script src="bower_components/flot/jquery.flot.js"></script>
+                <script src="bower_components/LZMA-JS/src/lzma.js"></script>
+            
+                <!-- My scripts -->
+                <script src="js/Simulation.js"></script>
+                <script src="js/Actors.js"></script>
+                <script src="js/state.js"></script>
+                <script src="js/ko-helpers.js"></script>
+
+                <script src="js/main.js"></script>
             </div>
         </div>
-
-        <div class="row" id="main-row">
-            <div class="small-4 columns">
-                <form data-bind="submit: go">
-                    <fieldset data-bind="with: servers">
-                        <legend>Servers</legend>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">Count</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: count">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">Proc (ms)</label>
-                            </div>
-                            <div class="small-4 columns">
-                                <input type="text" data-bind="value: proc_time.mean">
-                            </div>
-                            <div class="small-4 columns">
-                                <div class="between inline">&plusmn;</div>
-                                <input type="text" data-bind="value: proc_time.variance">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right">Max. queue</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: queue_bound">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="checkbox" id="quick_reject" data-bind="checked: quick_reject">
-                                <label for="quick_reject">Quick reject</label>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">P(fail)</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: P_fail">
-                            </div>
-                        </div>
-                    </fieldset>
-                    <!-- ....................................... -->
-                    <fieldset data-bind="with: clients">
-                        <legend>Clients</legend>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">Count</label>
-                            </div>
-                            <div class="small-4 columns">
-                                <input type="text" data-bind="value: count0">
-                            </div>
-                            <div class="small-4 columns">
-                                <div class="between small inline">to</div>
-                                <input type="text" data-bind="value: count1">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">Backoff</label>
-                            </div>
-                            <div class="small-8 columns">
-                              <select data-bind="options: backoffOptions, value: backoff"></select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right">Interval (ms)</label>
-                            </div>
-                            <div class="small-4 columns">
-                                <input type="text" data-bind="value: interval.mean">
-                            </div>
-                            <div class="small-4 columns">
-                                <div class="between inline">&plusmn;</div>
-                                <input type="text" data-bind="value: interval.variance">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right">Timeout (ms)</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: timeout">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">Retries</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: retries">
-                            </div>
-                        </div>
-
-                    </fieldset>
-                    <!-- ....................................... -->
-                    <fieldset data-bind="with: network">
-                        <legend>Network</legend>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right">Latency (ms)</label>
-                            </div>
-                            <div class="small-4 columns">
-                                <input type="text" data-bind="value: latency.mean">
-                            </div>
-                            <div class="small-4 columns">
-                                <div class="between inline">&plusmn;</div>
-                                <input type="text" data-bind="value: latency.variance">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right inline">P(drop)</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: P_drop">
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset>
-                        <legend>Simulation</legend>
-
-                        <div class="row">
-                            <div class="small-4 columns">
-                                <label class="right">Duration (min)</label>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="text" data-bind="value: duration">
-                            </div>
-                        </div>
-
-                        <input type="submit" class="right button" value="Go">
-                    </fieldset>
-                </form>
-            </div>
-
-            <div class="small-8 columns" id="chartholder" data-bind="with: results">
-                <select data-bind="options: charts, optionsText: 'caption', value: selectedChart"></select>
-                <div id="chart-area" width="500" height="500" style="width: 100%; height: 500px;"></div>
-                <div id="legend-area"></div>
-            </div>
-        </div>
-
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/lodash/dist/lodash.min.js"></script>
-        <script src="bower_components/heap/lib/heap.js"></script>
-        <script src="bower_components/knockout/dist/knockout.js"></script>
-        <script src="bower_components/flot/jquery.flot.js"></script>
-        <script src="bower_components/LZMA-JS/src/lzma.js"></script>
-    
-        <!-- My scripts -->
-        <script src="js/Simulation.js"></script>
-        <script src="js/Actors.js"></script>
-        <script src="js/state.js"></script>
-
-        <script src="js/main.js"></script>
     </body>
 </html>

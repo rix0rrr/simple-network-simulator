@@ -2,6 +2,15 @@ html {
     -webkit-font-smoothing: antialiased;
 }
 
+body {
+    background: url(img/bright_squares.png);
+}
+
+.outer {
+    background: white;
+    box-shadow: #777 0px 2px 10px;
+}
+
 h3 {
     font-family: 'league spartan', sans-serif;
     margin-bottom: 0px;

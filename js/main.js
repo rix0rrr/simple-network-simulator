@@ -1,8 +1,8 @@
 'use strict';
 
 function Distribution(mean, vari) {
-    this.mean = ko.observable(mean);
-    this.variance = ko.observable(vari);
+    this.mean = ko.observable(mean).extend({ numeric: true });
+    this.variance = ko.observable(vari).extend({ numeric: true });;
 
     this.distr = function() {
         return normal(this.mean(), this.variance());
@@ -11,7 +11,7 @@ function Distribution(mean, vari) {
 
 function NetworkSettings() {
     this.latency = new Distribution(10, 2);
-    this.P_drop = ko.observable(0.001);
+    this.P_drop = ko.observable(0.001).extend({ numeric: true });;
 
     this.options = function() {
         return {
@@ -22,10 +22,10 @@ function NetworkSettings() {
 }
 
 function Servers() {
-    this.count = ko.observable(5);
+    this.count = ko.observable(5).extend({ numeric: true });;
     this.proc_time = new Distribution(50, 10);
-    this.queue_bound = ko.observable(100);
-    this.P_fail = ko.observable(0.01);
+    this.queue_bound = ko.observable(100).extend({ numeric: true });;
+    this.P_fail = ko.observable(0.01).extend({ numeric: true });;
     this.quick_reject = ko.observable(true);
 
     this.options = function() {
@@ -50,12 +50,12 @@ var BACKOFFS = {
 };
 
 function Clients() {
-    this.count0 = ko.observable(1000);
-    this.count1 = ko.observable(3000);
+    this.count0 = ko.observable(100).extend({ numeric: true });;
+    this.count1 = ko.observable(1500).extend({ numeric: true });;
     this.backoff = ko.observable('constant');
     this.backoffOptions = ko.observable(_.keys(BACKOFFS));
-    this.timeout = ko.observable(30000);
-    this.retries = ko.observable(10);
+    this.timeout = ko.observable(30000).extend({ numeric: true });;
+    this.retries = ko.observable(10).extend({ numeric: true });;
     this.interval = new Distribution(1000, 100);
 
     this.options = function() {
@@ -120,14 +120,14 @@ function Results() {
     for (var key in SERIES) allSeries[key] = {};
 
     this.charts = ko.observable([
-        { caption: 'Latencies vs. queue size',
-          series: [['latencies', 'success_latencies'], ['queue_size']] },
         { caption: 'Transactions per second',
           series: [['tps', 'successrate', 'failrate'], []] },
-        { caption: 'Backoff times', 
-          series: [['waitp50', 'waitp99'], []] },
+        { caption: 'Latencies vs. queue size',
+          series: [['latencies', 'success_latencies'], ['queue_size']] },
         { caption: 'Request count', 
           series: [['uniques', 'served', 'useless'], []] },
+        { caption: 'Backoff times', 
+          series: [['waitp50', 'waitp99'], []] },
     ]);
     this.selectedChart = ko.observable(this.charts()[0]);
 
@@ -174,7 +174,7 @@ function Simu() {
     this.clients = new Clients();
     this.results = new Results();
 
-    this.duration = ko.observable(10);
+    this.duration = ko.observable(10).extend({ numeric: true });;
 
     this.buildSimulation = function(sim) {
         var network = new Network(sim, this.network.options());
