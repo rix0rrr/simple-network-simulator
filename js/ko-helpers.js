@@ -1,4 +1,5 @@
 'use strict';
+/* global ko */
 
 ko.extenders.numeric = function(target) {
     //create a writable computed observable to intercept writes to our observable

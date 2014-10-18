@@ -1,4 +1,5 @@
 'use strict';
+/* jshint undef: false */
 
 //----------------------------------------------------------------------
 //  EVENT
@@ -16,7 +17,7 @@ Event.compare = function(a, b) {
     if (b.t < a.t)
         return 1;
     return 0;
-}
+};
 
 /**
  * Normally distributed random number

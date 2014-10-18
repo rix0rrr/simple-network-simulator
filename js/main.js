@@ -1,8 +1,9 @@
 'use strict';
+/* jshint undef: false */
 
 function Distribution(mean, vari) {
     this.mean = ko.observable(mean).extend({ numeric: true });
-    this.variance = ko.observable(vari).extend({ numeric: true });;
+    this.variance = ko.observable(vari).extend({ numeric: true });
 
     this.distr = function() {
         return normal(this.mean(), this.variance());
@@ -11,21 +12,21 @@ function Distribution(mean, vari) {
 
 function NetworkSettings() {
     this.latency = new Distribution(10, 2);
-    this.P_drop = ko.observable(0.001).extend({ numeric: true });;
+    this.P_drop = ko.observable(0.001).extend({ numeric: true });
 
     this.options = function() {
         return {
             latency: this.latency.distr(),
             P_drop: this.P_drop()
-        }
-    }
+        };
+    };
 }
 
 function Servers() {
-    this.count = ko.observable(5).extend({ numeric: true });;
+    this.count = ko.observable(5).extend({ numeric: true });
     this.proc_time = new Distribution(50, 10);
-    this.queue_bound = ko.observable(100).extend({ numeric: true });;
-    this.P_fail = ko.observable(0.01).extend({ numeric: true });;
+    this.queue_bound = ko.observable(100).extend({ numeric: true });
+    this.P_fail = ko.observable(0.01).extend({ numeric: true });
     this.quick_reject = ko.observable(true);
 
     this.options = function() {
@@ -34,28 +35,28 @@ function Servers() {
             queue_bound: this.queue_bound(),
             P_fail: this.P_fail(),
             quick_reject: this.quick_reject()
-        }
-    }
+        };
+    };
 }
 
 var BACKOFFS = {
     'constant': constantBO,
-    'constant-random': function() { return randomized(constantBO()) },
+    'constant-random': function() { return randomized(constantBO()); },
     'linear': linearBO,
-    'linear-random': function() { return randomized(linearBO()) },
+    'linear-random': function() { return randomized(linearBO()); },
     'quadatric': quadraticBO,
-    'quadatric-random': function() { return randomized(quadraticBO()) },
+    'quadatric-random': function() { return randomized(quadraticBO()); },
     'exponential': expoBO,
-    'exponential-random': function() { return randomized(expoBO()) }
+    'exponential-random': function() { return randomized(expoBO()); }
 };
 
 function Clients() {
-    this.count0 = ko.observable(100).extend({ numeric: true });;
-    this.count1 = ko.observable(1500).extend({ numeric: true });;
+    this.count0 = ko.observable(100).extend({ numeric: true });
+    this.count1 = ko.observable(1500).extend({ numeric: true });
     this.backoff = ko.observable('constant');
     this.backoffOptions = ko.observable(_.keys(BACKOFFS));
-    this.timeout = ko.observable(30000).extend({ numeric: true });;
-    this.retries = ko.observable(10).extend({ numeric: true });;
+    this.timeout = ko.observable(30000).extend({ numeric: true });
+    this.retries = ko.observable(10).extend({ numeric: true });
     this.interval = new Distribution(1000, 100);
 
     this.options = function() {
@@ -64,8 +65,8 @@ function Clients() {
             backoff: BACKOFFS[this.backoff()](),
             timeout: this.timeout(),
             retries: this.retries()
-        }
-    }
+        };
+    };
 }
 
 function timeseries(label, fn, args) {
@@ -80,8 +81,8 @@ function timeseries(label, fn, args) {
             }).map(function(slice) {
                 return [slice.t0, slice[fn].apply(slice, args)];
             }).value()
-        }
-    }
+        };
+    };
 }
 
 function cumu(series_generator) {
@@ -93,7 +94,7 @@ function cumu(series_generator) {
         }
 
         return series;
-    }
+    };
 }
 
 function Results() {
@@ -146,7 +147,7 @@ function Results() {
             chartSeries.push(allSeries[s]);
         });
         showChart(chartSeries);
-    }
+    };
 
     this.selectedChart.subscribe(function(x) {
         updateChart();
@@ -158,14 +159,14 @@ function Results() {
         }
 
         updateChart();
-    }
+    };
 
     this.postUnpickle = function() {
         // Restore selected chart object
         var x = _.find(this.charts(), { caption: this.selectedChart().caption });
         if (x) this.selectedChart(x);
         else this.selectedChart(this.charts()[0]);
-    }
+    };
 }
 
 function Simu() {
@@ -174,7 +175,7 @@ function Simu() {
     this.clients = new Clients();
     this.results = new Results();
 
-    this.duration = ko.observable(10).extend({ numeric: true });;
+    this.duration = ko.observable(10).extend({ numeric: true });
 
     this.buildSimulation = function(sim) {
         var network = new Network(sim, this.network.options());
@@ -193,7 +194,7 @@ function Simu() {
         _.each(_.range(delta), function(k) {
             sim.schedule((k + 1) * dt, spawnClient, null);
         });
-    }
+    };
 
     this.go = function() {
         var start = Date.now();
@@ -207,7 +208,7 @@ function Simu() {
 
         var slices = sim.analyzer().slice(2000);
         this.results.absorb(slices);
-    }
+    };
 }
 
 function showChart(series) {
@@ -233,6 +234,6 @@ subscribeAll(simu, function() { pushState(simu); });
 var scrollGraph = function() {
     var t = $('#main-row').offset().top;
     $('#chartholder').css('padding-top', Math.max(0, $(window).scrollTop() - t - 10) + 30);
-}
+};
 $(window).scroll(scrollGraph);
 scrollGraph();

@@ -1,4 +1,6 @@
 'use strict';
+/* jshint undef: false */
+
 /**
  * Actors for the simulation
  */
@@ -214,7 +216,7 @@ _.assign(Client.prototype, {
  * Constant backoff function
  */
 function constantBO(n) {
-    return function() { return n || 1000; }
+    return function() { return n || 1000; };
 }
 
 /**
@@ -226,7 +228,7 @@ function linearBO(n) {
     return function() {
         x += n;
         return x;
-    }
+    };
 }
 
 /**
@@ -238,7 +240,7 @@ function quadraticBO(n) {
     return function() {
         i += 1;
         return n * i * i;
-    }
+    };
 }
 
 /**
@@ -249,12 +251,12 @@ function expoBO(n) {
     return function() {
         n *= 2;
         return n;
-    }
+    };
 }
 
 /**
  * A randomized version of the given backoff strategy
  */
 function randomized(backoff) {
-    return function() { return Math.random() * backoff(); }
+    return function() { return Math.random() * backoff(); };
 }
